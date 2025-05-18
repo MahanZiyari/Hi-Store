@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "952749953681",
+    "project_id": "hi-store-3e38b",
+    "storage_bucket": "hi-store-3e38b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:952749953681:android:5caf170156ec39d6116530",
+        "android_client_info": {
+          "package_name": "ir.mahan.histore"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgaRLxW_YwtjlK9bX9IBJ5M1AgLRBq2Do"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
