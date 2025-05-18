@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav"
+    app:startDestination="@id/splashFragment">
+
+    <!--Splash-->
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="ir.mahan.histore.ui.splash.SplashFragment"
+        android:label="fragment_splash"
+        tools:layout="@layout/fragment_splash" />
+    <action
+        android:id="@+id/actionToLogin"
+        app:destination="@id/navLogin"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    <!--Login Navigation-->
+    <navigation android:id="@+id/navLogin"
+        app:startDestination="@id/loginFragment">
+        <fragment
+            android:id="@+id/loginVerifyFragment"
+            android:name="ir.mahan.histore.ui.login.LoginVerifyFragment"
+            android:label="fragment_login_verify"
+            tools:layout="@layout/fragment_login_verify" >
+            <argument
+                android:name="phoneNumber"
+                app:argType="string" />
+        </fragment>
+        <fragment
+            android:id="@+id/loginFragment"
+            android:name="ir.mahan.histore.ui.login.LoginFragment"
+            android:label="LoginFragment"
+            tools:layout="@layout/fragment_login">
+            <action
+                android:id="@+id/actionLoginToVerify"
+                app:destination="@id/loginVerifyFragment"
+                app:enterAnim="@anim/from_right"
+                app:exitAnim="@anim/to_left"
+                app:popEnterAnim="@anim/from_left"
+                app:popExitAnim="@anim/to_right" />
+        </fragment>
+    </navigation>
+    <!--Main Navigation-->
+    <navigation android:id="@+id/navMain"
+        app:startDestination="@id/homeFragment">
+        <fragment
+            android:id="@+id/cartFragment"
+            android:name="ir.mahan.histore.ui.cart.CartFragment"
+            android:label="fragment_cart"
+            tools:layout="@layout/fragment_cart" />
+        <fragment
+            android:id="@+id/profileFragment"
+            android:name="ir.mahan.histore.ui.profile.ProfileFragment"
+            android:label="fragment_profile"
+            tools:layout="@layout/fragment_profile" />
+        <fragment
+            android:id="@+id/homeFragment"
+            android:name="ir.mahan.histore.ui.home.HomeFragment"
+            android:label="fragment_home"
+            tools:layout="@layout/fragment_home" />
+        <fragment
+            android:id="@+id/categoriesFragment"
+            android:name="ir.mahan.histore.ui.categories.CategoriesFragment"
+            android:label="fragment_categories"
+            tools:layout="@layout/fragment_categories" />
+    </navigation>
+    <!--Action to main-->
+    <action
+        android:id="@+id/actionToMain"
+        app:destination="@id/navMain"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+</navigation>
