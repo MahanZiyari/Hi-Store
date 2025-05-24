@@ -22,5 +22,6 @@ const val USER_TOKEN_DATA = "user_token_data"
 
 //other
 const val DEBUG_TAG = "DEBUG"
+const val GENERAL = "general"
 //Editable
 var IS_CALLED_VERIFY = false
