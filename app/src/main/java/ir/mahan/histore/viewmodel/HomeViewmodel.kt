@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ir.mahan.histore.data.model.home.ResponseBanners
+import ir.mahan.histore.data.model.home.ResponseDiscount
 import ir.mahan.histore.data.repository.HomeRepository
 import ir.mahan.histore.util.constants.GENERAL
 import ir.mahan.histore.util.network.NetworkResult
@@ -22,6 +23,7 @@ class HomeViewmodel @Inject constructor(private val repository: HomeRepository) 
         viewModelScope.launch {
             delay(200)
             fetchBannersData()
+            fetchDiscountItems()
         }
     }
 
@@ -34,5 +36,15 @@ class HomeViewmodel @Inject constructor(private val repository: HomeRepository) 
         _bannersLiveData.postValue(NetworkResult.Loading())
         val response = repository.getBannersList(GENERAL)
         _bannersLiveData.postValue(ResponseHandler(response).generateNetworkResult())
+    }
+
+    // Discount Items
+    private val _discountItemsLiveData = MutableLiveData<NetworkResult<ResponseDiscount>>()
+    val discountItemsLiveData: LiveData<NetworkResult<ResponseDiscount>> = _discountItemsLiveData
+
+    private fun fetchDiscountItems() = viewModelScope.launch(Dispatchers.IO) {
+        _discountItemsLiveData.postValue(NetworkResult.Loading())
+        val response = repository.getDiscountItems(GENERAL)
+        _discountItemsLiveData.postValue(ResponseHandler(response).generateNetworkResult())
     }
 }

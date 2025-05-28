@@ -7,4 +7,5 @@ import javax.inject.Inject
 
 class HomeRepository @Inject constructor(private val api: APIEndpoints) {
     suspend fun getBannersList(slug: String) = api.getBannersList(slug)
+    suspend fun getDiscountItems(slug: String) = api.getDiscountList(slug)
 }

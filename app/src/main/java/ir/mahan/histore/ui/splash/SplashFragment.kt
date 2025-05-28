@@ -15,6 +15,7 @@ import ir.mahan.histore.data.datastore.SessionManager
 import ir.mahan.histore.databinding.FragmentSplashBinding
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -52,6 +53,8 @@ class SplashFragment : Fragment() {
             override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
                 lifecycleScope.launch {
                     val token = sessionManager.authToken.first()
+                    Timber.d("$token")
+                    findNavController().popBackStack(R.id.splashFragment, true)
                     if (token == null) {
                         // go to login
                         findNavController().navigate(R.id.actionToLogin)

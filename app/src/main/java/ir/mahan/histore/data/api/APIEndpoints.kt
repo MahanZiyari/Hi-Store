@@ -2,6 +2,7 @@ package ir.mahan.histore.data.api
 
 
 import ir.mahan.histore.data.model.home.ResponseBanners
+import ir.mahan.histore.data.model.home.ResponseDiscount
 import ir.mahan.histore.data.model.login.BodyLogin
 import ir.mahan.histore.data.model.login.ResponseLogin
 import ir.mahan.histore.data.model.login.ResponseVerify
@@ -25,4 +26,7 @@ interface APIEndpoints {
 
     @GET("ad/swiper/{slug}")
     suspend fun getBannersList(@Path("slug") slug: String): Response<ResponseBanners>
+
+    @GET("offers/discount/{slug}")
+    suspend fun getDiscountList(@Path("slug") slug: String): Response<ResponseDiscount>
 }
