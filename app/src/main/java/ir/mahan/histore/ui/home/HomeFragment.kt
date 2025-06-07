@@ -1,34 +1,43 @@
 package ir.mahan.histore.ui.home
 
-import android.os.Build
+import android.app.Dialog
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import coil.load
+import com.todkars.shimmer.ShimmerRecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import ir.mahan.histore.R
 import ir.mahan.histore.data.model.home.ResponseBanners
 import ir.mahan.histore.data.model.home.ResponseDiscount
+import ir.mahan.histore.data.model.home.ResponseProducts
+import ir.mahan.histore.data.model.home.ResponseProducts.SubCategory.Products.Data
+import ir.mahan.histore.databinding.DialogCheckVpnBinding
 import ir.mahan.histore.databinding.FragmentHomeBinding
 import ir.mahan.histore.ui.home.adapters.BannerAdapter
 import ir.mahan.histore.ui.home.adapters.DiscountAdapter
+import ir.mahan.histore.ui.home.adapters.ProductsAdapter
+import ir.mahan.histore.util.ProductsCategories
 import ir.mahan.histore.util.base.BaseFragment
 import ir.mahan.histore.util.constants.DEBUG_TAG
 import ir.mahan.histore.util.extensions.isVisible
 import ir.mahan.histore.util.extensions.loadImage
 import ir.mahan.histore.util.extensions.setupRecyclerview
 import ir.mahan.histore.util.extensions.showSnackBar
+import ir.mahan.histore.util.extensions.transparentCorners
 import ir.mahan.histore.util.network.NetworkResult
 import ir.mahan.histore.viewmodel.HomeViewmodel
 import ir.mahan.histore.viewmodel.ProfileViewmodel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -48,11 +57,25 @@ class HomeFragment : BaseFragment() {
     private val viewModel: HomeViewmodel by activityViewModels()
     // Other
     private val pagerSnapHelper by lazy { PagerSnapHelper() }
+    private lateinit var discountTimer: CountDownTimer
     @Inject
     lateinit var bannerAdapter: BannerAdapter
     @Inject
     lateinit var discountAdapter: DiscountAdapter
-    private lateinit var discountTimer: CountDownTimer
+    @Inject
+    lateinit var mobileProductsAdapter: ProductsAdapter
+
+    @Inject
+    lateinit var shoesProductsAdapter: ProductsAdapter
+
+    @Inject
+    lateinit var stationeryProductsAdapter: ProductsAdapter
+
+    @Inject
+    lateinit var laptopProductsAdapter: ProductsAdapter
+
+    @Inject
+    lateinit var vpnStatus: Flow<Boolean>
 
 
     override fun onCreateView(
@@ -71,11 +94,17 @@ class HomeFragment : BaseFragment() {
             avatarImg.setOnClickListener{
                 findNavController().navigate(R.id.actionToProfile)
             }
+            // Restoring last scroll state
+            viewModel.lastScrollState?.run {
+                scrollLay.onRestoreInstanceState(this)
+            }
         }
         // Load data
         loadProfileData()
         loadBannerData()
         loadDiscountItems()
+        loadProductsSubSections()
+        checkVpnStatus()
     }
 
     private fun loadProfileData() = binding.apply {
@@ -162,6 +191,7 @@ class HomeFragment : BaseFragment() {
                             // Discount Timer
                             val endTime = it[0].endTime!!.split("T")[0]
                             calculateDiscountItemsRemainingTime(endTime)
+                            discountTimer.start()
                         } else {
                             //TODO("Show a good UI for no item at discount")
                         }
@@ -224,10 +254,104 @@ class HomeFragment : BaseFragment() {
         }
     }
 
+    private fun loadProductsSubSections() = binding.apply {
+        //Mobile
+        if (mobileLay.parent != null) {
+            val mobileInflate = mobileLay.inflate()
+            viewModel.getProductsSpecifiedBy(ProductsCategories.MOBILE).observe(viewLifecycleOwner) {
+                handleProductsNetworkResponse(it, mobileInflate.findViewById(R.id.mobileProductsList), mobileProductsAdapter)
+            }
+        }
+        //Shoes
+        if (shoesLay.parent != null) {
+            val shoesInflate = shoesLay.inflate()
+            viewModel.getProductsSpecifiedBy(ProductsCategories.SHOES).observe(viewLifecycleOwner) {
+                handleProductsNetworkResponse(it, shoesInflate.findViewById(R.id.menShoesProductsList), shoesProductsAdapter)
+            }
+        }
+        //Stationery
+        val stationeryInflate = stationeryLay.inflate()
+        viewModel.getProductsSpecifiedBy(ProductsCategories.STATIONERY).observe(viewLifecycleOwner) {
+            handleProductsNetworkResponse(it, stationeryInflate.findViewById(R.id.stationeryProductsList), stationeryProductsAdapter)
+        }
+        //Laptop
+        val laptopInflate = laptopLay.inflate()
+        viewModel.getProductsSpecifiedBy(ProductsCategories.LAPTOP).observe(viewLifecycleOwner) {
+            handleProductsNetworkResponse(it, laptopInflate.findViewById(R.id.laptopProductsList), laptopProductsAdapter)
+        }
+    }
+
+    private fun handleProductsNetworkResponse(networkResult: NetworkResult<ResponseProducts>, recyclerView: ShimmerRecyclerView, adapter: ProductsAdapter){
+        when (networkResult) {
+            is NetworkResult.Loading -> {
+                recyclerView.showShimmer()
+            }
+
+            is NetworkResult.Success -> {
+                recyclerView.hideShimmer()
+                networkResult.data?.let { responseProducts ->
+                    responseProducts.subCategory?.let { subCats ->
+                        subCats.products?.let { products ->
+                            products.data?.let { myData ->
+                                if (myData.isNotEmpty()) {
+                                    initProductsRecyclers(myData, recyclerView, adapter)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            is NetworkResult.Error -> {
+                recyclerView.hideShimmer()
+                binding.root.showSnackBar(networkResult.error!!)
+            }
+        }
+    }
+
+    private fun initProductsRecyclers(
+        data: List<Data>,
+        recyclerView: ShimmerRecyclerView,
+        adapter: ProductsAdapter
+    ) {
+        adapter.setData(data)
+        recyclerView.setupRecyclerview(
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, true), adapter
+        )
+    }
+
+    // Utility functions
+    private fun checkVpnStatus() {
+        lifecycleScope.launch {
+            vpnStatus.collect {
+                showVpnDialog()
+            }
+        }
+    }
+
+    private fun showVpnDialog() {
+        val dialog = Dialog(requireContext())
+        val dialogBinding = DialogCheckVpnBinding.inflate(layoutInflater)
+        dialog.transparentCorners()
+        // Always Configure View before setting content view
+        dialog.setContentView(dialogBinding.root)
+
+        dialogBinding.yesBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
     //  Lifecycle methods
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.lastScrollState = binding.scrollLay.onSaveInstanceState()
+    }
     override fun onStop() {
         super.onStop()
-        discountTimer.cancel()
+        if (::discountTimer.isInitialized) discountTimer.cancel()
     }
 
     override fun onDestroy() {

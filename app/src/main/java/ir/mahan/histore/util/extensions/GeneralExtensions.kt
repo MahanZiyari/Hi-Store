@@ -1,6 +1,7 @@
 package ir.mahan.histore.util.extensions
 
 import android.app.Activity
+import android.app.Dialog
 import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -65,4 +66,8 @@ fun RecyclerView.setupRecyclerview(myLayoutManager: RecyclerView.LayoutManager, 
         setHasFixedSize(true)
         adapter = myAdapter
     }
+}
+
+fun Dialog.transparentCorners() {
+    this.window!!.setBackgroundDrawableResource(android.R.color.transparent)
 }

@@ -11,6 +11,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import ir.mahan.histore.util.constants.NAMED_VPN
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -40,4 +41,35 @@ object CheckConnection {
             addCapability(NetworkCapabilities.NET_CAPABILITY_FOREGROUND)
     }.build()
 
+    @Provides
+    @Singleton
+    @Named(NAMED_VPN)
+    fun provideNRForVPN(): NetworkRequest = NetworkRequest.Builder().apply {
+        addTransportType(NetworkCapabilities.TRANSPORT_VPN)
+        removeCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN)
+    }.build()
+
+    @Provides
+    @Singleton
+    fun provideCheckVpn(
+        connectivityManager: ConnectivityManager,
+        @Named(NAMED_VPN) networkRequest: NetworkRequest
+    ): Flow<Boolean> = callbackFlow {
+
+        val networkCallBack = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                channel.trySend(true)
+            }
+
+            override fun onLost(network: Network) {
+                channel.trySend(false)
+            }
+        }
+
+        connectivityManager.registerNetworkCallback(networkRequest, networkCallBack)
+
+        awaitClose {
+            connectivityManager.unregisterNetworkCallback(networkCallBack)
+        }
+    }
 }
