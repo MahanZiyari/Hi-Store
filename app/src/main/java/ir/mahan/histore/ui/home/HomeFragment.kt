@@ -91,20 +91,31 @@ class HomeFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         // Handle UI
         binding.apply {
-            avatarImg.setOnClickListener{
-                findNavController().navigate(R.id.actionToProfile)
-            }
+            handleToolbarUserInteraction()
             // Restoring last scroll state
             viewModel.lastScrollState?.run {
                 scrollLay.onRestoreInstanceState(this)
             }
         }
         // Load data
+        loadScreenData()
+        checkVpnStatus()
+    }
+
+    private fun handleToolbarUserInteraction() = binding.apply {
+        avatarImg.setOnClickListener {
+            findNavController().navigate(R.id.actionToProfile)
+        }
+        searchImg.setOnClickListener {
+            findNavController().navigate(R.id.actionToSearch)
+        }
+    }
+
+    private fun loadScreenData() {
         loadProfileData()
         loadBannerData()
         loadDiscountItems()
         loadProductsSubSections()
-        checkVpnStatus()
     }
 
     private fun loadProfileData() = binding.apply {

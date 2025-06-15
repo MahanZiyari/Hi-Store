@@ -18,6 +18,14 @@
         app:exitAnim="@anim/nav_default_exit_anim"
         app:popEnterAnim="@anim/nav_default_pop_enter_anim"
         app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    <!--Search-->
+    <action
+        android:id="@+id/actionToSearch"
+        app:destination="@id/navSearch"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     <!--Login Navigation-->
     <navigation android:id="@+id/navLogin"
         app:startDestination="@id/loginFragment">
@@ -84,4 +92,20 @@
         app:exitAnim="@anim/nav_default_exit_anim"
         app:popEnterAnim="@anim/nav_default_pop_enter_anim"
         app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    <!--Search Navigation-->
+    <navigation android:id="@+id/navSearch"
+        app:startDestination="@id/searchFragment">
+        <fragment
+            android:id="@+id/searchFragment"
+            android:name="ir.mahan.histore.ui.search.SearchFragment"
+            android:label="fragment_search"
+            tools:layout="@layout/fragment_search" />
+        <action
+            android:id="@+id/actionSearchToFilter"
+            app:destination="@id/searchFilterFragment"/>
+        <dialog
+            android:id="@+id/searchFilterFragment"
+            android:name="ir.mahan.histore.ui.search.filter.SearchFilterFragment"
+            android:label="SearchFilterFragment" />
+    </navigation>
 </navigation>

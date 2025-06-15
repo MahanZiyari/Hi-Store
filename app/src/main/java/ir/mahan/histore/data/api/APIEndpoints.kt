@@ -8,6 +8,7 @@ import ir.mahan.histore.data.model.login.BodyLogin
 import ir.mahan.histore.data.model.login.ResponseLogin
 import ir.mahan.histore.data.model.login.ResponseVerify
 import ir.mahan.histore.data.model.profile.ResponseProfile
+import ir.mahan.histore.data.model.search.ResponseSearch
 import ir.mahan.histore.util.constants.PATH_SLUG
 import retrofit2.Response
 import retrofit2.http.Body
@@ -35,4 +36,7 @@ interface APIEndpoints {
 
     @GET("category/pro/{slug}")
     suspend fun getProductsList(@Path(PATH_SLUG) slug: String, @QueryMap queries: Map<String, String>): Response<ResponseProducts>
+
+    @GET("search")
+    suspend fun searchProducts(@QueryMap queries: Map<String, String>): Response<ResponseSearch>
 }

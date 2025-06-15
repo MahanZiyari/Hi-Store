@@ -13,6 +13,7 @@ const val HITS = "hits"
 
 //Queries
 const val SORT = "sort"
+const val Q = "q"
 const val SEARCH = "search"
 const val MIN_PRICE = "minPrice"
 const val MAX_PRICE = "maxPrice"
