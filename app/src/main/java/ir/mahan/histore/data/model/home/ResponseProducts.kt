@@ -3,6 +3,7 @@ package ir.mahan.histore.data.model.home
 
 import android.graphics.Color
 import com.google.gson.annotations.SerializedName
+import ir.mahan.histore.data.model.search.ResponseSearch
 
 data class ResponseProducts(
     @SerializedName("subCategory")
@@ -84,7 +85,7 @@ data class ResponseProducts(
                 @SerializedName("color_id")
                 val colorId: List<String?>?,
                 @SerializedName("colors")
-                val colors: List<Color>?,
+                val colors: List<ResponseSearch.Products.Data.Color>?,
                 @SerializedName("comments_avg_rate")
                 val commentsAvgRate: String?, // 2.5000
                 @SerializedName("comments_count")

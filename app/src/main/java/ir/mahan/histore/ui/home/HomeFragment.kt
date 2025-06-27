@@ -331,7 +331,9 @@ class HomeFragment : BaseFragment() {
         )
     }
 
+    ///////////////////////////////////////////////////////////////////////////
     // Utility functions
+    ///////////////////////////////////////////////////////////////////////////
     private fun checkVpnStatus() {
         lifecycleScope.launch {
             vpnStatus.collect {
@@ -354,8 +356,10 @@ class HomeFragment : BaseFragment() {
         dialog.show()
     }
 
-    //  Lifecycle methods
 
+    ///////////////////////////////////////////////////////////////////////////
+    // Lifecycle methods
+    ///////////////////////////////////////////////////////////////////////////
     override fun onPause() {
         super.onPause()
         viewModel.lastScrollState = binding.scrollLay.onSaveInstanceState()

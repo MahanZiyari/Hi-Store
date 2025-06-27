@@ -1,6 +1,7 @@
 package ir.mahan.histore.data.api
 
 
+import ir.mahan.histore.data.model.categories.ResponseCategories
 import ir.mahan.histore.data.model.home.ResponseBanners
 import ir.mahan.histore.data.model.home.ResponseDiscount
 import ir.mahan.histore.data.model.home.ResponseProducts
@@ -39,4 +40,7 @@ interface APIEndpoints {
 
     @GET("search")
     suspend fun searchProducts(@QueryMap queries: Map<String, String>): Response<ResponseSearch>
+
+    @GET("menu")
+    suspend fun fetchCategoriesList(): Response<ResponseCategories>
 }

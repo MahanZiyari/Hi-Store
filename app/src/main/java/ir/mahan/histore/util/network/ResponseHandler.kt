@@ -3,6 +3,7 @@ package ir.mahan.histore.util.network
 import com.google.gson.Gson
 import retrofit2.Response
 
+// TODO: Write Kdoc Comment for this Class
 open class ResponseHandler<T>(private val response: Response<T>) {
 
     open fun generateNetworkResult(): NetworkResult<T> {

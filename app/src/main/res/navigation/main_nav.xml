@@ -18,6 +18,8 @@
         app:exitAnim="@anim/nav_default_exit_anim"
         app:popEnterAnim="@anim/nav_default_pop_enter_anim"
         app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
+
     <!--Search-->
     <action
         android:id="@+id/actionToSearch"
@@ -26,9 +28,11 @@
         app:exitAnim="@anim/nav_default_exit_anim"
         app:popEnterAnim="@anim/nav_default_pop_enter_anim"
         app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
     <!--Login Navigation-->
     <navigation android:id="@+id/navLogin"
         app:startDestination="@id/loginFragment">
+        <!--Login Verify Fragment-->
         <fragment
             android:id="@+id/loginVerifyFragment"
             android:name="ir.mahan.histore.ui.login.LoginVerifyFragment"
@@ -38,6 +42,8 @@
                 android:name="phoneNumber"
                 app:argType="string" />
         </fragment>
+
+        <!--Login Fragment-->
         <fragment
             android:id="@+id/loginFragment"
             android:name="ir.mahan.histore.ui.login.LoginFragment"
@@ -52,9 +58,11 @@
                 app:popExitAnim="@anim/to_right" />
         </fragment>
     </navigation>
+
     <!--Main Navigation-->
     <navigation android:id="@+id/navMain"
         app:startDestination="@id/homeFragment">
+        <!--Cart-->
         <fragment
             android:id="@+id/cartFragment"
             android:name="ir.mahan.histore.ui.cart.CartFragment"
@@ -73,16 +81,31 @@
             android:name="ir.mahan.histore.ui.profile.ProfileFragment"
             android:label="fragment_profile"
             tools:layout="@layout/fragment_profile" />
+        <!--Home-->
         <fragment
             android:id="@+id/homeFragment"
             android:name="ir.mahan.histore.ui.home.HomeFragment"
             android:label="fragment_home"
             tools:layout="@layout/fragment_home" />
+        <!--Categories-->
         <fragment
             android:id="@+id/categoriesFragment"
             android:name="ir.mahan.histore.ui.categories.CategoriesFragment"
             android:label="fragment_categories"
-            tools:layout="@layout/fragment_categories" />
+            tools:layout="@layout/fragment_categories">
+            <!--Action to Categories Products-->
+            <action
+                android:id="@+id/actionFromCategoriesToRelatedProducts"
+                app:destination="@id/catProductNav"
+                app:enterAnim="@anim/nav_default_enter_anim"
+                app:exitAnim="@anim/nav_default_exit_anim"
+                app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+                app:popExitAnim="@anim/nav_default_pop_exit_anim">
+                <argument
+                    android:name="slug"
+                    app:argType="string"/>
+            </action>
+        </fragment>
     </navigation>
     <!--Action to main-->
     <action
@@ -92,9 +115,12 @@
         app:exitAnim="@anim/nav_default_exit_anim"
         app:popEnterAnim="@anim/nav_default_pop_enter_anim"
         app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
+
     <!--Search Navigation-->
     <navigation android:id="@+id/navSearch"
         app:startDestination="@id/searchFragment">
+        <!--Search Fragment-->
         <fragment
             android:id="@+id/searchFragment"
             android:name="ir.mahan.histore.ui.search.SearchFragment"
@@ -107,5 +133,27 @@
             android:id="@+id/searchFilterFragment"
             android:name="ir.mahan.histore.ui.search.filter.SearchFilterFragment"
             android:label="SearchFilterFragment" />
+    </navigation>
+
+    <!--CategoriesProduct Navigation-->
+    <navigation android:id="@+id/catProductNav"
+        app:startDestination="@id/categoryProductsFragment">
+        <dialog
+            android:id="@+id/categoriesFilterFragment"
+            android:name="ir.mahan.histore.ui.categories.CategoriesFilterFragment"
+            android:label="CategoriesFilterFragment"
+            tools:layout="@layout/fragment_categories_filter"/>
+        <fragment
+            android:id="@+id/categoryProductsFragment"
+            android:name="ir.mahan.histore.ui.categories.CategoryProductsFragment"
+            android:label="CategoryProductsFragment"
+            tools:layout="@layout/fragment_category_products">
+            <argument
+                android:name="slug"
+                app:argType="string"/>
+            <action
+                android:id="@+id/actionOpenCatFilters"
+                app:destination="@id/categoriesFilterFragment" />
+        </fragment>
     </navigation>
 </navigation>
