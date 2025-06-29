@@ -5,10 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import ir.mahan.histore.data.model.login.BodyLogin
-import ir.mahan.histore.data.model.login.ResponseLogin
-import ir.mahan.histore.data.repository.LoginRepository
-import ir.mahan.histore.data.model.login.ResponseVerify
 import ir.mahan.histore.data.model.profile.ResponseProfile
 import ir.mahan.histore.data.repository.ProfileRepository
 import ir.mahan.histore.util.network.NetworkResult
@@ -16,6 +12,7 @@ import ir.mahan.histore.util.network.ResponseHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import okhttp3.RequestBody
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,5 +34,15 @@ class ProfileViewmodel @Inject constructor(private val repository: ProfileReposi
         _profileData.postValue(NetworkResult.Loading())
         val response = repository.getProfileData()
         _profileData.postValue(ResponseHandler(response).generateNetworkResult())
+    }
+
+    //Upload Avatar
+    private val _avatarLiveData = MutableLiveData<NetworkResult<Unit>>()
+    val avatarLiveData: LiveData<NetworkResult<Unit>> = _avatarLiveData
+
+    fun uploadAvatarToServer(body: RequestBody) = viewModelScope.launch(Dispatchers.IO) {
+        _avatarLiveData.postValue(NetworkResult.Loading())
+        val response = repository.postAvtar(body)
+        _avatarLiveData.postValue(ResponseHandler(response).generateNetworkResult())
     }
 }

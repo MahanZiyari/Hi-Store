@@ -1,60 +1,233 @@
 package ir.mahan.histore.ui.profile
 
+import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import coil.load
+import com.app.imagepickerlibrary.ImagePicker
+import com.app.imagepickerlibrary.ImagePicker.Companion.registerImagePicker
+import com.app.imagepickerlibrary.listener.ImagePickerResultListener
+import com.app.imagepickerlibrary.model.PickExtension
+import com.app.imagepickerlibrary.model.PickerType
+import dagger.hilt.android.AndroidEntryPoint
 import ir.mahan.histore.R
+import ir.mahan.histore.databinding.FragmentProfileBinding
+import ir.mahan.histore.util.base.BaseFragment
+import ir.mahan.histore.util.constants.AVATAR_KEY
+import ir.mahan.histore.util.constants.HTTP_METHOD_KEY
+import ir.mahan.histore.util.constants.HTTP_METHOD_POST
+import ir.mahan.histore.util.constants.MULTIPART_FROM_DATA
+import ir.mahan.histore.util.constants.UTF_8
+import ir.mahan.histore.util.extensions.asFilePath
+import ir.mahan.histore.util.extensions.loadImage
+import ir.mahan.histore.util.extensions.showSnackBar
+import ir.mahan.histore.util.extensions.toMoneyFormat
+import ir.mahan.histore.util.network.NetworkResult
+import ir.mahan.histore.viewmodel.ProfileViewmodel
+import ir.mahan.histore.viewmodel.WalletViewModel
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
+import java.net.URLEncoder
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+@AndroidEntryPoint
+class ProfileFragment : BaseFragment(), ImagePickerResultListener {
 
-/**
- * A simple [Fragment] subclass.
- * Use the [ProfileFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class ProfileFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    ///////////////////////////////////////////////////////////////////////////
+    // Properties
+    ///////////////////////////////////////////////////////////////////////////
+    // binding
+    private var _binding: FragmentProfileBinding? = null
+    private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    // ViewModels
+    private val viewModel: ProfileViewmodel by activityViewModels()
+    private val walletViewModel: WalletViewModel by viewModels()
+
+    // Other
+    private val imagePicker: ImagePicker by lazy { registerImagePicker(this) }
+    ///////////////////////////////////////////////////////////////////////////
+    // Functions
+    ///////////////////////////////////////////////////////////////////////////
+
+    // Called inside onViewCreated()
+    private fun loadScreenData() {
+        loadProfileData()
+        loadWalletAmount()
+        loadAvatar()
+    }
+
+    // Called inside onViewCreated()
+    private fun setupUI() = binding.apply {
+        //Choose image
+        avatarEditImg.setOnClickListener {
+            openImagePicker()
+        }
+        //Menu items
+        menuLay.apply {
+            // TODO: Implement Navigating to pages
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false)
-    }
+    private fun loadProfileData() = binding.apply {
+        viewModel.profileData.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is NetworkResult.Loading -> {
+                    loading.isVisible = true
+                }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ProfileFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ProfileFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                is NetworkResult.Success -> {
+                    loading.isVisible = false
+                    result.data?.let { responseProfile ->
+                        if (responseProfile.avatar != null) {
+                            avatarImg.loadImage(responseProfile.avatar)
+                        } else {
+                            avatarImg.load(R.drawable.placeholder_user)
+                        }
+                        //Info
+                        infoLay.apply {
+                            phoneTxt.text = responseProfile.cellphone
+                            //Birthdate
+                            if (responseProfile.birthDate!!.isNotEmpty()) {
+                                birthDateTxt.text = responseProfile.birthDate.split("T")[0]
+                                    .replace("-", " / ")
+                            } else {
+                                infoBirthDateLay.isVisible = false
+                                line2.isVisible = false
+                            }
+                        }
+                    }
+                }
+
+                is NetworkResult.Error -> {
+                    loading.isVisible = false
+                    root.showSnackBar(result.error!!)
                 }
             }
+        }
     }
+
+    private fun loadWalletAmount() = binding.infoLay.apply {
+        walletViewModel.walletData.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is NetworkResult.Loading -> {
+                    walletLoading.isVisible = true
+                }
+
+                is NetworkResult.Success -> {
+                    walletLoading.isVisible = false
+                    result.data?.let { responseWallet ->
+                        walletTxt.text =
+                            responseWallet.wallet.toString().toInt().toMoneyFormat("تومان")
+                    }
+                }
+
+                is NetworkResult.Error -> {
+                    walletLoading.isVisible = false
+                    root.showSnackBar(result.error!!)
+                }
+            }
+        }
+    }
+
+    private fun loadAvatar() = binding.apply {
+        viewModel.avatarLiveData.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is NetworkResult.Loading -> {
+                    avatarLoading.isVisible = true
+                }
+
+                is NetworkResult.Success -> {
+                    avatarLoading.isVisible = false
+                    if (isNetworkAvailable)
+                        viewModel.fetchProfileData()
+                }
+
+                is NetworkResult.Error -> {
+                    avatarLoading.isVisible = false
+                    root.showSnackBar(result.error!!)
+                }
+            }
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // ImagePicker
+    ///////////////////////////////////////////////////////////////////////////
+
+    private fun openImagePicker() {
+        imagePicker
+            .title(getString(R.string.galleryImages))
+            .multipleSelection(false)
+            .showFolder(true)
+            .cameraIcon(true)
+            .doneIcon(true)
+            .allowCropping(true)
+            .compressImage(false)
+            .maxImageSize(2.5f)
+            .extension(PickExtension.ALL)
+        imagePicker.open(PickerType.GALLERY)
+    }
+
+    override fun onImagePick(uri: Uri?) {
+        // Returns if uri is null
+        if (uri == null) return
+        // Also returns if provided file path is null
+        val selectedImageFilePath = uri.asFilePath(requireContext())?.let { path ->
+            File(path)
+        } ?: return
+        // finding File Name with path
+        val fileName = URLEncoder.encode(selectedImageFilePath.absolutePath, UTF_8)
+        val requestBodyFile =
+            selectedImageFilePath.asRequestBody(MULTIPART_FROM_DATA.toMediaTypeOrNull())
+
+        // Generating a body for uploading Avatar
+        val multipartRequestBody: MultipartBody = MultipartBody.Builder()
+            .setType(MultipartBody.FORM) // Set the MIME typ
+            .addFormDataPart(HTTP_METHOD_KEY, HTTP_METHOD_POST)
+            .addFormDataPart(AVATAR_KEY, fileName, requestBodyFile)
+            .build()
+
+        if (isNetworkAvailable)
+            viewModel.uploadAvatarToServer(multipartRequestBody)
+    }
+
+    override fun onMultiImagePick(uris: List<Uri>?) {
+        // Not Needed
+    }
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Lifecycle Methods
+    ///////////////////////////////////////////////////////////////////////////
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentProfileBinding.inflate(layoutInflater)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        // Handle UI
+        setupUI()
+        loadScreenData()
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+
+
 }

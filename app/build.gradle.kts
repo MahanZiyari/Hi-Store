@@ -119,6 +119,6 @@ dependencies {
     implementation ("me.relex:circleindicator:2.1.6")
     implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation ("com.github.aliab:Persian-Date-Picker-Dialog:1.8.0")
-    //implementation ("com.github.SimformSolutionsPvtLtd:SSImagePicker:2.1")
+    implementation("com.github.SimformSolutionsPvtLtd:SSImagePicker:2.4")
     implementation ("com.github.sparrow007:carouselrecyclerview:1.2.6")
 }

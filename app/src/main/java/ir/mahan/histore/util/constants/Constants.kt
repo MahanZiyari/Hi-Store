@@ -22,6 +22,11 @@ const val USER_TOKEN_DATA = "user_token_data"
 
 //other
 const val DEBUG_TAG = "DEBUG"
+const val UTF_8 = "UTF-8"
+const val MULTIPART_FROM_DATA = "multipart/form-data"
+const val AVATAR_KEY = "avatar"
+const val HTTP_METHOD_KEY = "_method"
+const val HTTP_METHOD_POST = "post"
 
 //Editable
 var IS_CALLED_VERIFY = false

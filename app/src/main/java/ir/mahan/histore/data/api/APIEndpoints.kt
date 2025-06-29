@@ -9,8 +9,10 @@ import ir.mahan.histore.data.model.login.BodyLogin
 import ir.mahan.histore.data.model.login.ResponseLogin
 import ir.mahan.histore.data.model.login.ResponseVerify
 import ir.mahan.histore.data.model.profile.ResponseProfile
+import ir.mahan.histore.data.model.profile.ResponseWallet
 import ir.mahan.histore.data.model.search.ResponseSearch
 import ir.mahan.histore.util.constants.PATH_SLUG
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -43,4 +45,18 @@ interface APIEndpoints {
 
     @GET("menu")
     suspend fun fetchCategoriesList(): Response<ResponseCategories>
+
+    @GET("auth/wallet")
+    suspend fun fetchWalletAmount(): Response<ResponseWallet>
+
+
+    /**
+     * Post avatar to server
+     * It Uses RequestBody for creating dynamic  body
+     *
+     * @param body:RequestBody
+     * @return
+     */
+    @POST("auth/avatar")
+    suspend fun postAvatar(@Body body: RequestBody): Response<Unit>
 }

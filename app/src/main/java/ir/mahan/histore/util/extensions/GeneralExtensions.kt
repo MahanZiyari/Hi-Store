@@ -1,8 +1,11 @@
 package ir.mahan.histore.util.extensions
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
+import android.net.Uri
+import android.provider.MediaStore
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -70,4 +73,25 @@ fun RecyclerView.setupRecyclerview(myLayoutManager: RecyclerView.LayoutManager, 
 
 fun Dialog.transparentCorners() {
     this.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+}
+
+
+/**
+ * Created Extension Functions to Export File Path from provided Uri
+ *
+ * @param context
+ * @return
+ */
+@SuppressLint("Range")
+fun Uri.asFilePath(context: Context): String? {
+    var  filePath: String? = null
+    val  cursor = context.contentResolver.query(this, null, null, null)
+    if (cursor == null)
+        filePath = this.path
+    else {
+        if (cursor.moveToFirst())
+            filePath = cursor.getString(cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA))
+        cursor.close()
+    }
+    return filePath
 }
