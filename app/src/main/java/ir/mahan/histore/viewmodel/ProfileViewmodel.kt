@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ir.mahan.histore.data.model.profile.BodyUpdateProfile
 import ir.mahan.histore.data.model.profile.ResponseProfile
 import ir.mahan.histore.data.repository.ProfileRepository
 import ir.mahan.histore.util.network.NetworkResult
@@ -44,5 +45,15 @@ class ProfileViewmodel @Inject constructor(private val repository: ProfileReposi
         _avatarLiveData.postValue(NetworkResult.Loading())
         val response = repository.postAvtar(body)
         _avatarLiveData.postValue(ResponseHandler(response).generateNetworkResult())
+    }
+
+    //update profile
+    private val _updateProfileData = MutableLiveData<NetworkResult<ResponseProfile>>()
+    val updateProfileData: LiveData<NetworkResult<ResponseProfile>> = _updateProfileData
+
+    fun updateProfileInfo(body: BodyUpdateProfile) = viewModelScope.launch(Dispatchers.IO) {
+        _updateProfileData.postValue(NetworkResult.Loading())
+        val response = repository.postUploadProfile(body)
+        _updateProfileData.postValue(ResponseHandler(response).generateNetworkResult())
     }
 }

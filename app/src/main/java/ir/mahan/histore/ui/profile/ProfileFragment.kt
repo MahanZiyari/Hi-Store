@@ -1,5 +1,6 @@
 package ir.mahan.histore.ui.profile
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,6 +9,8 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import coil.load
 import com.app.imagepickerlibrary.ImagePicker
 import com.app.imagepickerlibrary.ImagePicker.Companion.registerImagePicker
@@ -23,6 +26,8 @@ import ir.mahan.histore.util.constants.HTTP_METHOD_KEY
 import ir.mahan.histore.util.constants.HTTP_METHOD_POST
 import ir.mahan.histore.util.constants.MULTIPART_FROM_DATA
 import ir.mahan.histore.util.constants.UTF_8
+import ir.mahan.histore.util.event.Event
+import ir.mahan.histore.util.event.EventBus
 import ir.mahan.histore.util.extensions.asFilePath
 import ir.mahan.histore.util.extensions.loadImage
 import ir.mahan.histore.util.extensions.showSnackBar
@@ -30,6 +35,7 @@ import ir.mahan.histore.util.extensions.toMoneyFormat
 import ir.mahan.histore.util.network.NetworkResult
 import ir.mahan.histore.viewmodel.ProfileViewmodel
 import ir.mahan.histore.viewmodel.WalletViewModel
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -71,10 +77,11 @@ class ProfileFragment : BaseFragment(), ImagePickerResultListener {
         }
         //Menu items
         menuLay.apply {
-            // TODO: Implement Navigating to pages
+            menuEditLay.setOnClickListener { findNavController().navigate(R.id.actionToEditProfile) }
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun loadProfileData() = binding.apply {
         viewModel.profileData.observe(viewLifecycleOwner) { result ->
             when (result) {
@@ -90,6 +97,9 @@ class ProfileFragment : BaseFragment(), ImagePickerResultListener {
                         } else {
                             avatarImg.load(R.drawable.placeholder_user)
                         }
+                        //Name
+                        if (responseProfile.firstname.isNullOrEmpty().not())
+                            nameTxt.text = "${responseProfile.firstname} ${responseProfile.lastname}"
                         //Info
                         infoLay.apply {
                             phoneTxt.text = responseProfile.cellphone
@@ -221,6 +231,12 @@ class ProfileFragment : BaseFragment(), ImagePickerResultListener {
         // Handle UI
         setupUI()
         loadScreenData()
+        lifecycleScope.launch {
+            EventBus.observe<Event.isUpdateProfile> {
+                if (isNetworkAvailable)
+                    viewModel.fetchProfileData()
+            }
+        }
 
     }
 

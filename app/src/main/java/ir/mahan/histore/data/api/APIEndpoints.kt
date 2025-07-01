@@ -8,6 +8,7 @@ import ir.mahan.histore.data.model.home.ResponseProducts
 import ir.mahan.histore.data.model.login.BodyLogin
 import ir.mahan.histore.data.model.login.ResponseLogin
 import ir.mahan.histore.data.model.login.ResponseVerify
+import ir.mahan.histore.data.model.profile.BodyUpdateProfile
 import ir.mahan.histore.data.model.profile.ResponseProfile
 import ir.mahan.histore.data.model.profile.ResponseWallet
 import ir.mahan.histore.data.model.search.ResponseSearch
@@ -17,6 +18,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.QueryMap
 
@@ -59,4 +61,7 @@ interface APIEndpoints {
      */
     @POST("auth/avatar")
     suspend fun postAvatar(@Body body: RequestBody): Response<Unit>
+
+    @PUT("auth/update")
+    suspend fun postUploadProfile(@Body body: BodyUpdateProfile): Response<ResponseProfile>
 }

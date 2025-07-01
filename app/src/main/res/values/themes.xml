@@ -34,8 +34,10 @@
     <style name="SalmonProgressbar">
         <item name="colorAccent">@color/salmon</item>
     </style>
+    <!--Bottom Sheet Dialogs-->
     <style name="RemoveDialogBackground" parent="Theme.AppCompat.Light.Dialog">
         <item name="android:windowBackground">@null</item>
+        <item name="android:windowSoftInputMode">adjustResize|stateVisible</item>
     </style>
     <!--Range Slider-->
     <style name="MyRangeStyle" parent="Widget.MaterialComponents.Slider">
@@ -52,7 +54,7 @@
         <item name="backgroundTint">@color/dodgerBlue</item>
         <item name="android:textAppearance">@style/TextAppearance.Tooltip</item>
     </style>
-
+    <!--Text-->
     <style name="TextAppearance.Tooltip" parent="TextAppearance.MaterialComponents.Tooltip">
         <item name="android:textColor">@color/white</item>
         <item name="fontFamily">@font/iransans</item>
@@ -64,11 +66,23 @@
         <item name="android:clickable">true</item>
         <item name="android:checkable">true</item>
     </style>
-
     <style name="FilterChipsText">
         <item name="fontFamily">@font/iransans</item>
         <item name="android:fontFamily">@font/iransans</item>
         <item name="android:textSize">@dimen/_9font_mdp</item>
         <item name="android:textColor">@color/item_chip_text</item>
+    </style>
+    <!--Text input layout-->
+    <style name="MediumTurquoiseTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="boxBackgroundColor">@color/cultured</item>
+        <item name="boxCornerRadiusTopStart">@dimen/_10mdp</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/_10mdp</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/_10mdp</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/_10mdp</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="hintAnimationEnabled">true</item>
+        <item name="boxStrokeWidthFocused">0dp</item>
+        <item name="hintTextColor">@color/gray</item>
+        <item name="startIconTint">@color/mediumTurquoise</item>
     </style>
 </resources>
