@@ -4,12 +4,14 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
@@ -94,4 +96,9 @@ fun Uri.asFilePath(context: Context): String? {
         cursor.close()
     }
     return filePath
+}
+
+fun Uri.openBrowser(context: Context) {
+    val intent =  Intent(Intent.ACTION_VIEW, this)
+    ContextCompat.startActivities(context, arrayOf(intent))
 }

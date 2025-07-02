@@ -6,6 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.FragmentComponent
 import ir.mahan.histore.data.model.login.BodyLogin
 import ir.mahan.histore.data.model.profile.BodyUpdateProfile
+import ir.mahan.histore.data.model.wallet.BodyIncreaseWallet
 
 @Module
 @InstallIn(FragmentComponent::class)
@@ -16,4 +17,7 @@ object FragmentModule {
 
     @Provides
     fun provideBodyUpdateProfile() = BodyUpdateProfile()
+
+    @Provides
+    fun provideBodyIncreaseWallet() = BodyIncreaseWallet()
 }

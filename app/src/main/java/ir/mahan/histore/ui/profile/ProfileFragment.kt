@@ -78,6 +78,7 @@ class ProfileFragment : BaseFragment(), ImagePickerResultListener {
         //Menu items
         menuLay.apply {
             menuEditLay.setOnClickListener { findNavController().navigate(R.id.actionToEditProfile) }
+            menuWalletLay.setOnClickListener { findNavController().navigate(R.id.actionToIncreaseWallet) }
         }
     }
 

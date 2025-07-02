@@ -69,6 +69,7 @@
             android:label="fragment_cart"
             tools:layout="@layout/fragment_cart" />
         <!--Profile-->
+            <!--action to profile-->
         <action
             android:id="@+id/actionToProfile"
             app:destination="@id/profileFragment"
@@ -81,9 +82,26 @@
             android:name="ir.mahan.histore.ui.profile.ProfileFragment"
             android:label="fragment_profile"
             tools:layout="@layout/fragment_profile" />
+            <!--action to edit profile-->
         <action
             android:id="@+id/actionToEditProfile"
             app:destination="@id/editProfileFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+            <!--action to increase wallet-->
+        <action
+            android:id="@+id/actionToIncreaseWallet"
+            app:destination="@id/increaseWalletFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+            <!--action to user comments-->
+        <action
+            android:id="@+id/actionToUserComments"
+            app:destination="@id/userCommentsFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
@@ -167,4 +185,13 @@
         android:id="@+id/editProfileFragment"
         android:name="ir.mahan.histore.ui.profile.edit.EditProfileFragment"
         android:label="EditProfileFragment" />
+    <dialog
+        android:id="@+id/increaseWalletFragment"
+        android:name="ir.mahan.histore.ui.wallet.IncreaseWalletFragment"
+        android:label="IncreaseWalletFragment" />
+    <fragment
+        android:id="@+id/userCommentsFragment"
+        android:name="ir.mahan.histore.ui.profile.comments.UserCommentsFragment"
+        android:label="fragment_user_comments"
+        tools:layout="@layout/fragment_user_comments" />
 </navigation>

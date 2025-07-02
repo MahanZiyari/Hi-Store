@@ -11,11 +11,16 @@ import ir.mahan.histore.data.model.login.ResponseVerify
 import ir.mahan.histore.data.model.profile.BodyUpdateProfile
 import ir.mahan.histore.data.model.profile.ResponseProfile
 import ir.mahan.histore.data.model.profile.ResponseWallet
+import ir.mahan.histore.data.model.profile.userComment.ResponseDeleteComment
+import ir.mahan.histore.data.model.profile.userComment.ResponseProfileComments
 import ir.mahan.histore.data.model.search.ResponseSearch
+import ir.mahan.histore.data.model.wallet.BodyIncreaseWallet
+import ir.mahan.histore.data.model.wallet.ResponseIncreaseWallet
 import ir.mahan.histore.util.constants.PATH_SLUG
 import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -64,4 +69,13 @@ interface APIEndpoints {
 
     @PUT("auth/update")
     suspend fun postUploadProfile(@Body body: BodyUpdateProfile): Response<ResponseProfile>
+
+    @POST("auth/wallet")
+    suspend fun postIncreaseWallet(@Body body: BodyIncreaseWallet): Response<ResponseIncreaseWallet>
+
+    @GET("auth/comments")
+    suspend fun fetchUserComments(): Response<ResponseProfileComments>
+
+    @DELETE("auth/comment/{id}")
+    suspend fun deleteUserComment(@Path("id") id: Int): Response<ResponseDeleteComment>
 }
