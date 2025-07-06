@@ -1,5 +1,6 @@
 package ir.mahan.histore.util.event
 
 object Event {
-    object isUpdateProfile
+    object IsUpdateProfile
+    object IsUpdateAddress
 }

@@ -106,6 +106,22 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+            <!--action to user favorites-->
+        <action
+            android:id="@+id/actionToUserFavorites"
+            app:destination="@id/favoritesFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />'
+        <!--action to user addresses-->
+        <action
+            android:id="@+id/actionToUserAddresses"
+            app:destination="@id/addressesFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <!--Home-->
         <fragment
             android:id="@+id/homeFragment"
@@ -184,14 +200,42 @@
     <dialog
         android:id="@+id/editProfileFragment"
         android:name="ir.mahan.histore.ui.profile.edit.EditProfileFragment"
-        android:label="EditProfileFragment" />
+        android:label="EditProfileFragment"
+        tools:layout="@layout/fragment_edit_profile"/>
     <dialog
         android:id="@+id/increaseWalletFragment"
         android:name="ir.mahan.histore.ui.wallet.IncreaseWalletFragment"
-        android:label="IncreaseWalletFragment" />
+        android:label="IncreaseWalletFragment"
+        tools:layout="@layout/fragment_increase_wallet"/>
     <fragment
         android:id="@+id/userCommentsFragment"
         android:name="ir.mahan.histore.ui.profile.comments.UserCommentsFragment"
         android:label="fragment_user_comments"
         tools:layout="@layout/fragment_user_comments" />
+    <fragment
+        android:id="@+id/addressesFragment"
+        android:name="ir.mahan.histore.ui.profile.address.AddressesFragment"
+        android:label="AddressesFragment"
+        tools:layout="@layout/fragment_addresses">
+        <action
+            android:id="@+id/actionToAddAddress"
+            app:destination="@id/addAddressFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/favoritesFragment"
+        android:name="ir.mahan.histore.ui.profile.favorites.FavoritesFragment"
+        android:label="FavoritesFragment"
+        tools:layout="@layout/fragment_favorites"/>
+    <fragment
+        android:id="@+id/addAddressFragment"
+        android:name="ir.mahan.histore.ui.profile.address.add.AddAddressFragment"
+        android:label="AddAddressFragment"
+        tools:layout="@layout/fragment_add_address">
+        <argument
+            android:name="addressItem"
+            app:argType="ir.mahan.histore.data.model.address.ResponseProfileAddresses$ResponseProfileAddressesItem"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+
 </navigation>

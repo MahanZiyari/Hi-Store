@@ -2,7 +2,6 @@ package ir.mahan.histore.ui.profile.edit
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -10,7 +9,6 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import coil.load
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import ir.hamsaa.persiandatepicker.PersianDatePickerDialog
@@ -19,11 +17,9 @@ import ir.hamsaa.persiandatepicker.api.PersianPickerListener
 import ir.mahan.histore.R
 import ir.mahan.histore.data.model.profile.BodyUpdateProfile
 import ir.mahan.histore.databinding.FragmentEditProfileBinding
-import ir.mahan.histore.databinding.FragmentSearchFilterBinding
 import ir.mahan.histore.util.event.Event
 import ir.mahan.histore.util.event.EventBus
 import ir.mahan.histore.util.extensions.enableLoading
-import ir.mahan.histore.util.extensions.loadImage
 import ir.mahan.histore.util.extensions.showSnackBar
 import ir.mahan.histore.util.network.NetworkResult
 import ir.mahan.histore.viewmodel.ProfileViewmodel
@@ -136,7 +132,7 @@ class EditProfileFragment : BottomSheetDialogFragment() {
                     submitBtn.enableLoading(false)
                     result.data?.let {
                         lifecycleScope.launch {
-                            EventBus.publish(Event.isUpdateProfile)
+                            EventBus.publish(Event.IsUpdateProfile)
                         }
                         this@EditProfileFragment.dismiss()
                     }

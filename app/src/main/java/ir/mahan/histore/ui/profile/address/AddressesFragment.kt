@@ -1,49 +1,52 @@
-package ir.mahan.histore.ui.profile.favorites
+package ir.mahan.histore.ui.profile.address
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import ir.mahan.histore.R
+import ir.mahan.histore.data.model.address.ResponseProfileAddresses
+import ir.mahan.histore.data.model.address.ResponseProfileAddresses.ResponseProfileAddressesItem
 import ir.mahan.histore.data.model.profile.favorites.ResponseProfileFavorites
-import ir.mahan.histore.databinding.FragmentFavoritesBinding
+import ir.mahan.histore.databinding.FragmentAddressesBinding
 import ir.mahan.histore.util.base.BaseFragment
+import ir.mahan.histore.util.event.Event
+import ir.mahan.histore.util.event.EventBus
 import ir.mahan.histore.util.extensions.setupRecyclerview
 import ir.mahan.histore.util.extensions.showSnackBar
 import ir.mahan.histore.util.network.NetworkResult
-import ir.mahan.histore.viewmodel.FavoritesViewModel
+import ir.mahan.histore.viewmodel.AddressViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
-class FavoritesFragment : BaseFragment() {
+class AddressesFragment : BaseFragment() {
 
     ///////////////////////////////////////////////////////////////////////////
     // Properties
     ///////////////////////////////////////////////////////////////////////////
     //Binding
-    private var _binding: FragmentFavoritesBinding? = null
+    private var _binding: FragmentAddressesBinding? = null
     private val binding get() = _binding!!
     // View Model
-    private val viewModel by viewModels<FavoritesViewModel>()
+    private val viewModel by viewModels<AddressViewModel>()
     // Other
     @Inject
-    lateinit var favoritesAdapter: FavoritesAdapter
-    private var recyclerviewState: Parcelable? = null
+    lateinit var addressesAdapter: AddressesAdapter
     ///////////////////////////////////////////////////////////////////////////
     // user Functions
     ///////////////////////////////////////////////////////////////////////////
 
-    private fun requestForFavorites() {
+    private fun requestForAddresses() {
         if (isNetworkAvailable)
-            viewModel.getUserFavorites()
+            viewModel.getUserAddresses()
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -52,39 +55,50 @@ class FavoritesFragment : BaseFragment() {
     }
 
     private fun initToolbar() = binding.toolbar.apply {
-        toolbarTitleTxt.text = getString(R.string.yourFavorites)
-        toolbarOptionImg.isVisible = false
+        toolbarTitleTxt.text = getString(R.string.yourAddresses)
         toolbarBackImg.setOnClickListener { findNavController().popBackStack() }
+        //Add
+        toolbarOptionImg.apply {
+            setImageResource(R.drawable.location_plus)
+            setOnClickListener {
+                findNavController().navigate(R.id.actionToAddAddress)
+            }
+        }
     }
 
 
 
     private fun loadScreenData(){
-        observeUserFavorites()
-        observeDeleteFavoriteResult()
+        lifecycleScope.launch {
+            EventBus.observe<Event.IsUpdateAddress> {
+                requestForAddresses()
+            }
+        }
+        observeUserAddresses()
+//        observeDeleteFavoriteResult()
     }
 
-    private fun observeUserFavorites() = binding.apply {
-        viewModel.userFavoritesLiveData.observe(viewLifecycleOwner) { result ->
+    private fun observeUserAddresses() = binding.apply {
+        viewModel.userAddressesLiveData.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is NetworkResult.Loading -> {
-                    commentsList.showShimmer()
+                    addressList.showShimmer()
                 }
 
                 is NetworkResult.Success -> {
-                    commentsList.hideShimmer()
+                    addressList.hideShimmer()
                     result.data?.let {
-                        if (it.data.isNotEmpty()) {
-                            initRecycler(it.data)
+                        if (it.isNotEmpty()) {
+                            initRecycler(it)
                         } else {
                             emptyLay.isVisible = true
-                            commentsList.isVisible = false
+                            addressList.isVisible = false
                         }
                     }
                 }
 
                 is NetworkResult.Error -> {
-                    commentsList.hideShimmer()
+                    addressList.hideShimmer()
                     root.showSnackBar(result.error!!)
                 }
             }
@@ -92,13 +106,13 @@ class FavoritesFragment : BaseFragment() {
     }
 
     private fun observeDeleteFavoriteResult() = binding.apply {
-        viewModel.deleteFavoriteResult.observe(viewLifecycleOwner) { result ->
+        viewModel.provinceListLiveData.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is NetworkResult.Loading -> {}
 
                 is NetworkResult.Success -> {
                     result.data?.let {
-                        requestForFavorites()
+                        //requestForAddresses()
                     }
                 }
 
@@ -109,19 +123,14 @@ class FavoritesFragment : BaseFragment() {
         }
     }
 
-    private fun initRecycler(list: List<ResponseProfileFavorites.Data>) {
+    private fun initRecycler(list: List<ResponseProfileAddressesItem>) {
         binding.apply {
-            favoritesAdapter.setData(list)
-            commentsList.setupRecyclerview(LinearLayoutManager(requireContext()), favoritesAdapter)
-            //Auto scroll
-            commentsList.layoutManager?.onRestoreInstanceState(recyclerviewState)
+            addressesAdapter.setData(list)
+            addressList.setupRecyclerview(LinearLayoutManager(requireContext()), addressesAdapter)
             //Click
-            favoritesAdapter.setOnItemClickListener {
-                //Save state
-                recyclerviewState = commentsList.layoutManager?.onSaveInstanceState()
-                //Call delete api
-                if (isNetworkAvailable)
-                    viewModel.deleteUserFavorite(it)
+            addressesAdapter.setOnItemClickListener {
+                val action = AddressesFragmentDirections.actionToAddAddress().setAddressItem(it)
+                findNavController().navigate(action)
             }
         }
     }
@@ -131,14 +140,14 @@ class FavoritesFragment : BaseFragment() {
     ///////////////////////////////////////////////////////////////////////////
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentFavoritesBinding.inflate(layoutInflater)
+        _binding = FragmentAddressesBinding.inflate(layoutInflater)
         return binding.root
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requestForFavorites()
+        requestForAddresses()
         setupUI()
         loadScreenData()
     }

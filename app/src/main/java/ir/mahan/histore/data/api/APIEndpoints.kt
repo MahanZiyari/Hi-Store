@@ -1,6 +1,10 @@
 package ir.mahan.histore.data.api
 
 
+import ir.mahan.histore.data.model.address.BodySubmitAddress
+import ir.mahan.histore.data.model.address.ResponseProfileAddresses
+import ir.mahan.histore.data.model.address.ResponseProvinceList
+import ir.mahan.histore.data.model.address.ResponseSubmitAddress
 import ir.mahan.histore.data.model.categories.ResponseCategories
 import ir.mahan.histore.data.model.home.ResponseBanners
 import ir.mahan.histore.data.model.home.ResponseDiscount
@@ -26,6 +30,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 import retrofit2.http.QueryMap
 
 interface APIEndpoints {
@@ -85,4 +90,19 @@ interface APIEndpoints {
 
     @DELETE("auth/favorite/{id}")
     suspend fun deleteUserFavorite(@Path("id") id: Int): Response<ResponseDeleteComment>
+
+    @GET("auth/addresses")
+    suspend fun getProfileAddressesList(): Response<ResponseProfileAddresses>
+
+    @GET("auth/address/provinces")
+    suspend fun getProvinceList(): Response<ResponseProvinceList>
+
+    @GET("auth/address/provinces")
+    suspend fun getCityList(@Query("provinceId") id: Int): Response<ResponseProvinceList>
+
+    @POST("auth/address")
+    suspend fun postSubmitAddress(@Body body: BodySubmitAddress): Response<ResponseSubmitAddress>
+
+    @DELETE("auth/address/remove/{id}")
+    suspend fun deleteProfileAddress(@Path("id") id: Int): Response<ResponseDeleteComment>
 }

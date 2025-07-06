@@ -79,6 +79,9 @@ class ProfileFragment : BaseFragment(), ImagePickerResultListener {
         menuLay.apply {
             menuEditLay.setOnClickListener { findNavController().navigate(R.id.actionToEditProfile) }
             menuWalletLay.setOnClickListener { findNavController().navigate(R.id.actionToIncreaseWallet) }
+            menuCommentsLay.setOnClickListener { findNavController().navigate(R.id.actionToUserComments) }
+            menuFavoritesLay.setOnClickListener { findNavController().navigate(R.id.actionToUserFavorites) }
+            menuAddressesLay.setOnClickListener { findNavController().navigate(R.id.actionToUserAddresses) }
         }
     }
 
@@ -233,7 +236,7 @@ class ProfileFragment : BaseFragment(), ImagePickerResultListener {
         setupUI()
         loadScreenData()
         lifecycleScope.launch {
-            EventBus.observe<Event.isUpdateProfile> {
+            EventBus.observe<Event.IsUpdateProfile> {
                 if (isNetworkAvailable)
                     viewModel.fetchProfileData()
             }
