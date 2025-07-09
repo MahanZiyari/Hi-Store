@@ -22,9 +22,12 @@ import ir.mahan.histore.R
 import ir.mahan.histore.databinding.FragmentProfileBinding
 import ir.mahan.histore.util.base.BaseFragment
 import ir.mahan.histore.util.constants.AVATAR_KEY
+import ir.mahan.histore.util.constants.CANCELED
+import ir.mahan.histore.util.constants.DELIVERED
 import ir.mahan.histore.util.constants.HTTP_METHOD_KEY
 import ir.mahan.histore.util.constants.HTTP_METHOD_POST
 import ir.mahan.histore.util.constants.MULTIPART_FROM_DATA
+import ir.mahan.histore.util.constants.PENDING
 import ir.mahan.histore.util.constants.UTF_8
 import ir.mahan.histore.util.event.Event
 import ir.mahan.histore.util.event.EventBus
@@ -82,6 +85,18 @@ class ProfileFragment : BaseFragment(), ImagePickerResultListener {
             menuCommentsLay.setOnClickListener { findNavController().navigate(R.id.actionToUserComments) }
             menuFavoritesLay.setOnClickListener { findNavController().navigate(R.id.actionToUserFavorites) }
             menuAddressesLay.setOnClickListener { findNavController().navigate(R.id.actionToUserAddresses) }
+        }
+        //Order
+        orderLay.apply {
+            menuDeliveredLay.setOnClickListener {
+                navigateToOrderPage(DELIVERED)
+            }
+            menuPendingLay.setOnClickListener {
+                navigateToOrderPage(PENDING)
+            }
+            menuCanceledLay.setOnClickListener {
+                navigateToOrderPage(CANCELED)
+            }
         }
     }
 
@@ -169,6 +184,11 @@ class ProfileFragment : BaseFragment(), ImagePickerResultListener {
                 }
             }
         }
+    }
+
+    private fun navigateToOrderPage(status: String) {
+        val direction = ProfileFragmentDirections.actionToUserOrders(status)
+        findNavController().navigate(direction)
     }
 
     ///////////////////////////////////////////////////////////////////////////

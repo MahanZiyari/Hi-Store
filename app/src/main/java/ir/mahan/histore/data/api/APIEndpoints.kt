@@ -16,6 +16,7 @@ import ir.mahan.histore.data.model.profile.BodyUpdateProfile
 import ir.mahan.histore.data.model.profile.ResponseProfile
 import ir.mahan.histore.data.model.profile.ResponseWallet
 import ir.mahan.histore.data.model.profile.favorites.ResponseProfileFavorites
+import ir.mahan.histore.data.model.profile.order.ResponseProfileOrdersList
 import ir.mahan.histore.data.model.profile.userComment.ResponseDeleteComment
 import ir.mahan.histore.data.model.profile.userComment.ResponseProfileComments
 import ir.mahan.histore.data.model.search.ResponseSearch
@@ -105,4 +106,7 @@ interface APIEndpoints {
 
     @DELETE("auth/address/remove/{id}")
     suspend fun deleteProfileAddress(@Path("id") id: Int): Response<ResponseDeleteComment>
+
+    @GET("auth/orders")
+    suspend fun getProfileOrdersList(@Query("status") status: String): Response<ResponseProfileOrdersList>
 }

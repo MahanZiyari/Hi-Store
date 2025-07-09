@@ -27,6 +27,9 @@ const val MULTIPART_FROM_DATA = "multipart/form-data"
 const val AVATAR_KEY = "avatar"
 const val HTTP_METHOD_KEY = "_method"
 const val HTTP_METHOD_POST = "post"
+const val PENDING = "pending"
+const val CANCELED = "canceled"
+const val DELIVERED = "delivered"
 
 //Editable
 var IS_CALLED_VERIFY = false

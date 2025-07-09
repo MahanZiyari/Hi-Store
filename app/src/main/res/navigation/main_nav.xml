@@ -113,11 +113,19 @@
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />'
-        <!--action to user addresses-->
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+            <!--action to user addresses-->
         <action
             android:id="@+id/actionToUserAddresses"
             app:destination="@id/addressesFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <!--action to user orders-->
+        <action
+            android:id="@+id/actionToUserOrders"
+            app:destination="@id/profileOrdersFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
@@ -236,6 +244,16 @@
             app:argType="ir.mahan.histore.data.model.address.ResponseProfileAddresses$ResponseProfileAddressesItem"
             app:nullable="true"
             android:defaultValue="@null" />
+    </fragment>
+    <!--Profile  Orders-->
+    <fragment
+        android:id="@+id/profileOrdersFragment"
+        android:name="ir.mahan.histore.ui.profile.orders.ProfileOrdersFragment"
+        android:label="fragment_profile_orders"
+        tools:layout="@layout/fragment_profile_orders">
+        <argument
+            android:name="orderStatus"
+            app:argType="string"/>
     </fragment>
 
 </navigation>
